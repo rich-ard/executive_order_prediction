@@ -18,6 +18,6 @@ This work was heavily influenced by a letter[^1] published in the American Polit
 
 [^3]: U.S. Census. (2025, January 21). Census Bureau Economic Briefing Room. Retrieved January 21, 2025, from  https://www.census.gov/economic-indicators/
 
-[^4]: University of California Santa Barbara (2024, September 23). Presidential Job Approval--All Data. The American Presidency Project. Retrieved January 21, 2025, from https://www.federalregister.gov/presidential-documents/executive-orders
+[^4]: University of California Santa Barbara (2024, September 23). Presidential Job Approval--All Data. The American Presidency Project. Retrieved January 21, 2025, from https://www.presidency.ucsb.edu/statistics/data/presidential-job-approval-all-data
 
 [^1]: CHRISTENSON, D. P., & KRINER, D. L. (2019). *Does Public Opinion Constrain Presidential Unilateralism?* American Political Science Review, 113(4), 1071–1077. doi:10.1017/S0003055419000327
