@@ -7,6 +7,12 @@ from google.cloud import storage
 import json
 import logging
 
+# Configure the logging module
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Create a logger
+logger = logging.getLogger(__name__)
+
 # Set up Google Cloud Storage client
 storage_client = storage.Client()
 bucket_name = 'executive-orders'
@@ -40,10 +46,10 @@ def retrieve_from_federal_register(url):
         max_pres_doc_no = max([int(x) for x in pres_doc_numbers])
         pres_dates = [datetime.strptime(item['publication_date'], '%Y-%m-%d') for item in orders_in_json if item['publication_date'] != None]
         max_date = max(pres_dates).strftime("%Y-%m-%d")
-        logging.log(f'successful API retrieval of {num_records} records up to order no. {max_pres_doc_no} on {max_date}')
+        logger.log(f'successful API retrieval of {num_records} records up to order no. {max_pres_doc_no} on {max_date}')
         return json.dumps(orders_in_json), max_pres_doc_no, pres_dates
     else:
-        logging.error(f'API failure with response status {response.status_code}')
+        logger.error(f'API failure with response status {response.status_code}')
 
 def retrieve_and_write_json_to_bucket():
     big_json_file, newest_order, most_recent_date  = retrieve_from_federal_register(api_url)
@@ -53,10 +59,10 @@ def retrieve_and_write_json_to_bucket():
 
     try:
         blob.upload_from_string(data=big_json_file, content_type='application/json')
-        logging.log(f'Data successfully stored in GCS: {blob.public_url}')
+        logger.log(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
-        logging.error(f'Storage in GCS failed')
+        logger.error(f'Storage in GCS failed')
 
 if __name__ == '__main__':
     retrieve_and_write_json_to_bucket()
