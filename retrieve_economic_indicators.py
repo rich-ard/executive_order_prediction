@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Set up Google Cloud Storage client
 storage_client = storage.Client()
-bucket_name = 'executive-orders'
+bucket_name = 'economic-indicators'
 bucket = storage_client.bucket(bucket_name)
 
 # economic indicator data is refreshed almost every day. more information here:
