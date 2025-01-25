@@ -6,6 +6,7 @@ from datetime import datetime
 from google.cloud import storage
 import json
 import logging
+import os
 
 # Configure the logging module
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +15,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 logger = logging.getLogger(__name__)
 
 # Set up Google Cloud Storage client
-storage_client = storage.Client()
+project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+storage_client = storage.Client(project_id)
 bucket_name = 'executive-orders'
 bucket = storage_client.bucket(bucket_name)
 
@@ -46,23 +48,23 @@ def retrieve_from_federal_register(url):
         max_pres_doc_no = max([int(x) for x in pres_doc_numbers])
         pres_dates = [datetime.strptime(item['publication_date'], '%Y-%m-%d') for item in orders_in_json if item['publication_date'] != None]
         max_date = max(pres_dates).strftime("%Y-%m-%d")
-        logger.log(f'successful API retrieval of {num_records} records up to order no. {max_pres_doc_no} on {max_date}')
-        return json.dumps(orders_in_json), max_pres_doc_no, pres_dates
+        logger.info(f'successful API retrieval of {num_records} records up to order no. {max_pres_doc_no} on {max_date}')
+        return json.dumps(orders_in_json), max_pres_doc_no, max_date
     else:
         logger.error(f'API failure with response status {response.status_code}')
 
 def retrieve_and_write_json_to_bucket():
     big_json_file, newest_order, most_recent_date  = retrieve_from_federal_register(api_url)
     # Store data in GCS
-    blob_name = f'executive_orders_through_{newest_order}_on_{most_recent_date}.json' 
+    blob_name = f'executive_orders/executive_orders_through_{newest_order}_on_{most_recent_date}.json' 
     blob = bucket.blob(blob_name)
 
     try:
         blob.upload_from_string(data=big_json_file, content_type='application/json')
-        logger.log(f'Data successfully stored in GCS: {blob.public_url}')
+        logger.info(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
-        logger.error(f'Storage in GCS failed')
+        logger.error(f'Storage in GCS failed: {e}')
 
 if __name__ == '__main__':
     retrieve_and_write_json_to_bucket()
