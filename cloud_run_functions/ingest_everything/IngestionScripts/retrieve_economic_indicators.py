@@ -6,6 +6,7 @@ import pandas as pd
 import logging
 import requests
 from google.cloud import storage
+import os
 
 # Configure the logging module
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +15,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 logger = logging.getLogger(__name__)
 
 # Set up Google Cloud Storage client
-storage_client = storage.Client(project='executive-orders-448515')
+project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+storage_client = storage.Client(project_id)
 bucket_name = 'executive-orders'
 bucket = storage_client.bucket(bucket_name)
 
@@ -38,7 +40,7 @@ def get_most_recent_friday(date_format="%Y%m%d"):
     return last_friday_str
 
 def get_file_from_url():
-    friday_date_string = '20250109' #get_most_recent_friday()
+    friday_date_string = get_most_recent_friday()
     friday_date_int = int(friday_date_string)
     date_int = friday_date_int
     while (friday_date_int-date_int) < 6:
@@ -57,11 +59,11 @@ def retrieve_and_write_csv_to_bucket():
     blob = bucket.blob(blob_name)
 
     try:
-        blob.upload_from_string(data=output)
-        logger.log(f'Data successfully stored in GCS: {blob.public_url}')
+        blob.upload_from_string(data=output, content_type='application/csv')
+        logger.info(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
-        logger.error(f'Storage in GCS failed')
+        logger.error(f'Storage in GCS failed: {e}')
 
 if __name__ == '__main__':
     retrieve_and_write_csv_to_bucket()
