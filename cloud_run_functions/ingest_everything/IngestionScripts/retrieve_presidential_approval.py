@@ -7,6 +7,8 @@ import pandas as pd
 from google.cloud import storage
 import logging
 import os
+import re
+from datetime import datetime
 
 # Configure the logging module
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
 # Set up Google Cloud Storage client
 project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
 storage_client = storage.Client(project_id)
-bucket_name = 'approval-ratings'
+bucket_name = 'executive-orders'
 bucket = storage_client.bucket(bucket_name)
 
 # Cheating here a little bit. I'm going to just populate a list of presidents rather than scrape for it.
@@ -59,17 +61,13 @@ def url_get_contents(url):
     #decode the site text for parsing
     text_parsed = full_site_text.decode('utf-8')
 
-    #create HTMLTableParser object
-    p = HTMLTableParser()
-
-    #feed it a decoded text
-    p.feed(text_parsed)
+    return text_parsed
 
 # retrieve a dataframe of tabular data from each of the UCSB pages as they are formatted 2025-1-24
 def retrieve_table_from_prez(prez):
     try: 
         # defining the html contents of a URL.
-        xhtml = url_get_contents(f'{generic_link_start}{prez}{generic_link_end}').decode('utf-8')
+        xhtml = url_get_contents(f'{generic_link_start}{prez}{generic_link_end}')
         logger.info(f'website read for {prez} successful')
 
         try:
@@ -110,8 +108,9 @@ def retrieve_and_write_csv_to_bucket():
         else:
             approval_data = pd.concat([approval_data, retrieve_table_from_prez(president)], ignore_index=True)
         
-
-    max_date = max(approval_data['Start Date'])
+    # some dates appear to have been entered incorrectly - pull only correct dates
+    dates_cleaned = [date for date in approval_data['Start Date'] if re.match('(\d{1,2}\/\d{1,2}\/\d{4})', str(date))]
+    max_date = max(dates_cleaned, key=lambda d: datetime.strptime(d, '%m/%d/%Y'))
     blob_name = f'presidential_approvals/approval ratings loaded through {max_date}.csv' 
     blob = bucket.blob(blob_name)
 
