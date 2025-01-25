@@ -1,0 +1,7 @@
+functions_framework==3.8.2
+html_table_parser-python3==0.3.1
+pandas==2.2.3
+protobuf==5.29.3
+Requests==2.32.3
+google-cloud-storage
+urllib3
