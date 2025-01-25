@@ -106,7 +106,7 @@ def retrieve_and_write_csv_to_bucket(presidents):
         approval_data = pd.concat([approval_data, retrieve_table_from_prez(president)], ignore_index=True)
 
     max_date = max(approval_data['Start Date'])
-    blob_name = f'approval ratings loaded through {max_date}.json' 
+    blob_name = f'approval ratings loaded through {max_date}.csv' 
     blob = bucket.blob(blob_name)
 
     try:
