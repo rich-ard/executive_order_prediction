@@ -6,6 +6,7 @@ from html_table_parser.parser import HTMLTableParser
 import pandas as pd
 from google.cloud import storage
 import logging
+import os
 
 # Configure the logging module
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +15,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 logger = logging.getLogger(__name__)
 
 # Set up Google Cloud Storage client
-storage_client = storage.Client()
+project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+storage_client = storage.Client(project_id)
 bucket_name = 'approval-ratings'
 bucket = storage_client.bucket(bucket_name)
 
@@ -39,7 +41,6 @@ presidents = [
 
 generic_link_start = 'https://www.presidency.ucsb.edu/statistics/data/'
 generic_link_end = '-public-approval'
-approval_data = pd.DataFrame()
 
 # Opens a website and read its
 # binary contents (HTTP Response Body)
@@ -94,27 +95,32 @@ def retrieve_table_from_prez(prez):
             logger.info(f'data load for {prez} successful')
 
         except Exception as e:
-            logger.error(f'data load for {prez} failed')
+            logger.error(f'data load for {prez} failed: {e}')
 
     except Exception as e:
-        logger.error(f'website read for {prez} failed')
+        logger.error(f'website read for {generic_link_start}{prez}{generic_link_end} failed: {e}')
 
     return df
     
-def retrieve_and_write_csv_to_bucket(presidents):
+def retrieve_and_write_csv_to_bucket():
+    approval_data = None
     for president in presidents:
-        approval_data = pd.concat([approval_data, retrieve_table_from_prez(president)], ignore_index=True)
+        if approval_data is None:
+            approval_data = retrieve_table_from_prez(president)
+        else:
+            approval_data = pd.concat([approval_data, retrieve_table_from_prez(president)], ignore_index=True)
+        
 
     max_date = max(approval_data['Start Date'])
-    blob_name = f'approval ratings loaded through {max_date}.csv' 
+    blob_name = f'presidential_approvals/approval ratings loaded through {max_date}.csv' 
     blob = bucket.blob(blob_name)
 
     try:
-        blob.upload_from_string(data=approval_data.to_csv(index=False))
-        logger.log(f'Data successfully stored in GCS: {blob.public_url}')
+        blob.upload_from_string(data=approval_data.to_csv(index=False), content_type='application/csv')
+        logger.info(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
-        logger.error(f'Storage in GCS failed')
+        logger.error(f'Storage in GCS failed: {e}')
 
 
 if __name__ == '__main__':
