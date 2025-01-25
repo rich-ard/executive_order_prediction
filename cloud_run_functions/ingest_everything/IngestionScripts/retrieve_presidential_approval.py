@@ -111,6 +111,8 @@ def retrieve_and_write_csv_to_bucket():
     # some dates appear to have been entered incorrectly - pull only correct dates
     dates_cleaned = [date for date in approval_data['Start Date'] if re.match('(\d{1,2}\/\d{1,2}\/\d{4})', str(date))]
     max_date = max(dates_cleaned, key=lambda d: datetime.strptime(d, '%m/%d/%Y'))
+    # convert format to remove slashes
+    max_date = max_date.strftime("%Y-%m-%d")
     blob_name = f'presidential_approvals/approval ratings loaded through {max_date}.csv' 
     blob = bucket.blob(blob_name)
 
