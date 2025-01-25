@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 logger = logging.getLogger(__name__)
 
 # Set up Google Cloud Storage client
-storage_client = storage.Client()
-bucket_name = 'economic-indicators'
+storage_client = storage.Client(project='executive-orders-448515')
+bucket_name = 'executive-orders'
 bucket = storage_client.bucket(bucket_name)
 
 # economic indicator data is refreshed almost every day. more information here:
@@ -53,7 +53,7 @@ def get_file_from_url():
 
 def retrieve_and_write_csv_to_bucket():
     output, most_recent_date = get_file_from_url()
-    blob_name = f'economic indicators_on_{most_recent_date}.csv' 
+    blob_name = f'economic_indicators/economic indicators_on_{most_recent_date}.csv' 
     blob = bucket.blob(blob_name)
 
     try:
