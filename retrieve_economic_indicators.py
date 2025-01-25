@@ -57,7 +57,7 @@ def retrieve_and_write_csv_to_bucket():
     blob = bucket.blob(blob_name)
 
     try:
-        blob.upload_from_string(data=output, content_type='application/json')
+        blob.upload_from_string(data=output)
         logger.log(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
