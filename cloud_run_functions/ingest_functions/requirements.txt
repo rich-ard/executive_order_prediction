@@ -1,5 +1,0 @@
-functions_framework==3.8.2
-html_table_parser==0.1.0
-pandas==2.2.3
-protobuf==5.29.3
-Requests==2.32.3
