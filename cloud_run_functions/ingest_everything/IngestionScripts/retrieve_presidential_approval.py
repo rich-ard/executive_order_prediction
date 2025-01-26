@@ -112,8 +112,9 @@ def retrieve_and_write_csv_to_bucket():
     dates_cleaned = [date for date in approval_data['Start Date'] if re.match('(\d{1,2}\/\d{1,2}\/\d{4})', str(date))]
     max_date = max(dates_cleaned, key=lambda d: datetime.strptime(d, '%m/%d/%Y'))
     # convert format to remove slashes
-    max_date = max_date.strftime("%Y-%m-%d")
-    blob_name = f'presidential_approvals/approval ratings loaded through {max_date}.csv' 
+    max_date = max_date.replace('/', '-')
+    # file structure for GCP Hive partitioning here: https://cloud.google.com/bigquery/docs/hive-partitioned-queries#supported_data_layouts
+    blob_name = f'presidential_approvals/dt={datetime.today().strftime('%Y-%m-%d')}/lang=en/approval ratings loaded through {max_date}.csv' 
     blob = bucket.blob(blob_name)
 
     try:
