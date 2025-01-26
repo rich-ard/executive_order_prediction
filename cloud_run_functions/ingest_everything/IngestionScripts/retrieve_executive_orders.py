@@ -49,7 +49,7 @@ def retrieve_from_federal_register(url):
         pres_dates = [datetime.strptime(item['publication_date'], '%Y-%m-%d') for item in orders_in_json if item['publication_date'] != None]
         max_date = max(pres_dates).strftime("%Y-%m-%d")
         logger.info(f'successful API retrieval of {num_records} records up to order no. {max_pres_doc_no} on {max_date}')
-        return json.dumps(orders_in_json), max_pres_doc_no, max_date
+        return orders_in_json, max_pres_doc_no, max_date
     else:
         logger.error(f'API failure with response status {response.status_code}')
 
