@@ -55,13 +55,16 @@ def retrieve_from_federal_register(url):
 
 def retrieve_and_write_json_to_bucket():
     big_json_file, newest_order, most_recent_date  = retrieve_from_federal_register(api_url)
+    # GCP BigQuery ingestion requires newline-delimited json
+    json_upload_object = '\n'.join(json.dumps(entry) for entry in big_json_file)
+
     # Store data in GCS
     # file structure for GCP Hive partitioning here: https://cloud.google.com/bigquery/docs/hive-partitioned-queries#supported_data_layouts
     blob_name = f'executive_orders/dt={datetime.today().strftime('%Y-%m-%d')}/lang=en/executive_orders_through_{newest_order}_on_{most_recent_date}.json' 
     blob = bucket.blob(blob_name)
 
     try:
-        blob.upload_from_string(data=big_json_file, content_type='application/json')
+        blob.upload_from_string(data=json_upload_object, content_type='application/json')
         logger.info(f'Data successfully stored in GCS: {blob.public_url}')
 
     except Exception as e:
