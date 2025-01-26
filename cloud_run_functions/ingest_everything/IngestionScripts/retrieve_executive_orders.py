@@ -56,7 +56,8 @@ def retrieve_from_federal_register(url):
 def retrieve_and_write_json_to_bucket():
     big_json_file, newest_order, most_recent_date  = retrieve_from_federal_register(api_url)
     # Store data in GCS
-    blob_name = f'executive_orders/executive_orders_through_{newest_order}_on_{most_recent_date}.json' 
+    # file structure for GCP Hive partitioning here: https://cloud.google.com/bigquery/docs/hive-partitioned-queries#supported_data_layouts
+    blob_name = f'executive_orders/dt={datetime.today().strftime('%Y-%m-%d')}/lang=en/executive_orders_through_{newest_order}_on_{most_recent_date}.json' 
     blob = bucket.blob(blob_name)
 
     try:
