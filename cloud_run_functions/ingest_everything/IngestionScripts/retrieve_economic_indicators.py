@@ -55,7 +55,7 @@ def get_file_from_url():
 
 def retrieve_and_write_csv_to_bucket():
     output, most_recent_date = get_file_from_url()
-    blob_name = f'economic_indicators/economic indicators_on_{most_recent_date}.csv' 
+    blob_name = f'economic_indicators/dt={datetime.today().strftime('%Y-%m-%d')}/lang=en/economic indicators_on_{most_recent_date}.csv' 
     blob = bucket.blob(blob_name)
 
     try:
