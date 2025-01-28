@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `executive-orders-448515.weekly_data_collected.weekly
   , orders_outcome_var INT64
   , run_date DATETIME
 )
-PARTITION BY run_date;
+PARTITION BY DATE(run_date);
 
 INSERT INTO `executive-orders-448515.weekly_data_collected.weekly_variables_flattened` (
 
