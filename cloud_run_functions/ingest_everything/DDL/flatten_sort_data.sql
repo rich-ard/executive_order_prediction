@@ -5,9 +5,9 @@ DECLARE FirstOrderDate DATE
 # Create date-partitioned table if not present
 CREATE TABLE IF NOT EXISTS `executive-orders-448515.weekly_data_collected.weekly_variables_flattened` (
   week_start DATE
-  , approving STRING
-  , disapproving STRING
-  , unsure_or_no_data STRING
+  , approving FLOAT64
+  , disapproving FLOAT64
+  , unsure_or_no_data FLOAT64
   , BusinessApplications INT64
   , ConstructionSpending STRING
   , DurableGoodsNewOrders STRING
@@ -41,9 +41,9 @@ WITH Week_Array AS (
 
   SELECT
     week.week_start
-    , approvals.approving
-    , approvals.disapproving
-    , approvals.unsure_or_no_data
+    , AVG(SAFE_CAST(approvals.approving AS FLOAT64)) AS approving
+    , AVG(SAFE_CAST(approvals.disapproving AS FLOAT64)) AS disapproving
+    , AVG(SAFE_CAST(approvals.unsure_or_no_data AS FLOAT64)) unsure_or_no_data
     , indicators.BusinessApplications
     , IF(indicators.ConstructionSpending = 'NA', NULL, ConstructionSpending) ConstructionSpending
     , IF(indicators.DurableGoodsNewOrders = 'NA', NULL, DurableGoodsNewOrders) DurableGoodsNewOrders
@@ -68,12 +68,9 @@ WITH Week_Array AS (
     ON DATE_TRUNC(approvals.period_start, MONTH) = DATE_TRUNC(week.week_start, MONTH)
   LEFT JOIN `executive-orders-448515.economic_indicators.economic_indicators_sort` indicators
     ON indicators.month_start = DATE_TRUNC(week.week_start, MONTH)
-
+  WHERE ConstructionSpending IS NOT NULL
   GROUP BY
     week.week_start
-    , approvals.approving
-    , approvals.disapproving
-    , approvals.unsure_or_no_data
     , indicators.BusinessApplications
     , indicators.ConstructionSpending
     , indicators.DurableGoodsNewOrders
