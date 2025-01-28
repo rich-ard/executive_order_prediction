@@ -9,7 +9,6 @@ SET MAX_DATE = (
 
 CREATE OR REPLACE TABLE `executive-orders-448515.executive_orders.executive_orders_sort` AS 
 SELECT
-  # basic format cleaning of week_start
   publication_date
   , COUNT(*) AS executive_orders_on_this_date
 FROM `executive-orders-448515.executive_orders.executive_orders_ingest`
