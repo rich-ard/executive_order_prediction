@@ -15,13 +15,13 @@ SELECT
     , SAFE.PARSE_DATE('%m/%d/%Y', start_date) #1/10/2021
     , SAFE.PARSE_DATE('%m/%d/%Y', REGEXP_REPLACE(start_date, r'^(?:.*?\\K/){3}', '')) #1/10/2/021 for some reason
   )
-  AS week_start
+  AS period_start
   , COALESCE(
     SAFE.PARSE_DATE('%m/%d/%y', end_date)   #1/10/21
     , SAFE.PARSE_DATE('%m/%d/%Y', end_date) #1/10/2021
     , SAFE.PARSE_DATE('%m/%d/%Y', REGEXP_REPLACE(end_date, r'^(?:.*?\\K/){3}', '')) #1/10/2/021 for some reason
   )
-  AS week_end
+  AS period_end
   , approving
   , disapproving
   , unsure_or_no_data
