@@ -1,0 +1,4 @@
+set GCP_PROJECT=<full project name> #use "export" rather than "set" in bash
+docker build -t <image> . 
+docker tag <image> gcr.io/<full project name>/<image>:v4
+docker push gcr.io/<full project name>/<image>:v4
