@@ -15,7 +15,9 @@ What this repository is *emphatically not* is an instruction manual. I have atta
 ## Data Sources
 
 Executive order data is retrieved from the Federal Register[^2].
+
 Economic indicator data is retreived from the U.S. Census Bureau[^3].
+
 Presidential job approval data is retreived from UC Santa Barbara[^4].
 
 ## Acknowledgments
