@@ -2,6 +2,16 @@
 
 Building a pipeline and predictive model of executive order counts based on economic and political indicators.
 
+## Overview
+
+This is mostly a data engineering project: scraping data sources from a RESTful API, a regularly updated public-facing bank of CSV files, and a bunch of reasonably well-organized using HTML tables. This data is then used to build a SARIMAX model, with hyperparameter tuning performed using mlflow. All of this work was performed on the Google Cloud Platform, because it's what I use at work right now, and this gave me the opportunity to play around with a bunch of stuff before I put in a big access request to our IAM team.
+
+What this repository is *emphatically not* is an instruction manual. I have attached a free-to-use license here, and you're welcome to go to town with it, but this is a personal project (which I uwed for a capstone presentation during my Master's Degree.
+
+## Data Architecture
+
+![Data architecture diagram](./screenshots/data_architecture_diagram.png)
+
 ## Data Sources
 
 Executive order data is retrieved from the Federal Register[^2].
@@ -10,7 +20,9 @@ Presidential job approval data is retreived from UC Santa Barbara[^4].
 
 ## Acknowledgments
 
-This work was heavily influenced by a letter[^1] published in the American Political Science Review in 2019 and, in the future, I hope to expand my work to include the indicators and methods outlined by Drs. Dino P. Christensen and Douglas L. Kriner. 
+This work was heavily influenced by a letter[^1] published in the American Political Science Review in 2019 and, in the future, I hope to expand my work to include the indicators and methods outlined by Drs. Dino P. Christensen and Douglas L. Kriner.
+
+Any success implementing an mlflow server on PostGRESQL on Google Cloud Platform is a result of the outstanding work [provided here by DLabs](https://github.com/dlabsai/mlflow-for-gcp).
 
 ## References
 
