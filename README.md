@@ -6,7 +6,7 @@ Building a pipeline and predictive model of executive order counts based on econ
 
 This is mostly a data engineering project: scraping data sources from a RESTful API, a regularly updated public-facing bank of CSV files, and a bunch of reasonably well-organized using HTML tables. This data is then used to build a SARIMAX model, with hyperparameter tuning performed using mlflow. All of this work was performed on the Google Cloud Platform, because it's what I use at work right now, and this gave me the opportunity to play around with a bunch of stuff before I put in a big access request to our IAM team.
 
-What this repository is *emphatically not* is an instruction manual. I have attached a free-to-use license here, and you're welcome to go to town with it, but this is a personal project (which I uwed for a capstone presentation during my Master's Degree.
+What this repository is *emphatically not* is an instruction manual. I have attached a free-to-use license here, and you're welcome to go to town with it, but this is a personal project (which I used for a capstone presentation during my Master's Degree.
 
 ## Data Architecture
 
