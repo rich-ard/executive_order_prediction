@@ -170,7 +170,9 @@ experiment = mlflow.get_experiment_by_name("SARIMAX")
 with mlflow.start_run(run_name="Sarimax",
                       experiment_id=experiment.experiment_id) as run:
     mlflow.statsmodels.log_model(results,model_name,registered_model_name=model_name)
-    mlflow.log_params({"order":final_sarimax_model_params['pdq'],"seasonal_order":final_sarimax_model_params['seasonal_pdq']})
+    mlflow.log_params({"order":final_sarimax_model_params['pdq'],
+                       "seasonal_order":final_sarimax_model_params['seasonal_pdq'],
+                       "AIC":final_results.aic})
     mlflow.log_figure(fig1, 'forecasting_results.png')
     model_uri = f"runs:/{run.info.run_id}/{model_name}"
     print("Model saved in run %s" % run.info.run_id)
