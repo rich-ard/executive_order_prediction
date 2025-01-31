@@ -1,5 +1,6 @@
 db-dtypes==1.4.0
 google-cloud-bigquery==3.29.0
+google-cloud-storage==2.19.0
 mlflow==2.20.1
 mlflow_skinny==2.20.1
 numpy==2.2.2
