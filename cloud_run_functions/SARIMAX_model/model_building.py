@@ -1,6 +1,6 @@
 
 # retrieve data from BigQuery
-
+import os
 import configparser
 from datetime import datetime
 from google.cloud import bigquery
@@ -22,12 +22,10 @@ def load_env_values() -> None:
     config = configparser.ConfigParser(interpolation=None)
     config.sections()
     config.read(".env")
-
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["google"]["GOOGLE_APPLICATION_CREDENTIALS"]
     os.environ["MLFLOW_TRACKING_USERNAME"] = config["mlflow"]["MLFLOW_TRACKING_USERNAME"]
     os.environ["MLFLOW_TRACKING_PASSWORD"] = config["mlflow"]["MLFLOW_TRACKING_PASSWORD"]
     os.environ["MLFLOW_TRACKING_URI"] = config["mlflow"]["MLFLOW_TRACKING_URI"]
-
-# mlflow.set_experiment('SARIMAX_TUNING')
 
 client = bigquery.Client()
 
@@ -82,15 +80,15 @@ p = d = q = range(0, 2)
 pdq = list(itertools.product(p, d, q))
 seasonal_pdq = [(x[0], x[1], x[2], 52) for x in list(itertools.product(p, d, q))] #52 here represents weeks
 
-print('Examples of parameter combinations for Seasonal ARIMA...')
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[4]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+# print('Examples of parameter combinations for Seasonal ARIMA...')
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[3]))
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[4]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[1]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[2]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
 df_results = pd.DataFrame(columns=['pdq', 'seasonal_pdq', 'AIC'])
 for param in pdq:
@@ -167,12 +165,15 @@ job.result()
 # write experiment results to mlflow
 
 model_name = f"SARIMAX_run_at{datetime.now()}"
+load_env_values()
+experiment = mlflow.get_experiment_by_name("SARIMAX")
 with mlflow.start_run(run_name="Sarimax",
-                      experiment_id=3) as run:
+                      experiment_id=experiment.experiment_id) as run:
     mlflow.statsmodels.log_model(results,model_name,registered_model_name=model_name)
     mlflow.log_params({"order":final_sarimax_model_params['pdq'],"seasonal_order":final_sarimax_model_params['seasonal_pdq']})
     mlflow.log_figure(fig1, 'forecasting_results.png')
     model_uri = f"runs:/{run.info.run_id}/{model_name}"
     print("Model saved in run %s" % run.info.run_id)
     print(f"Model URI: {model_uri}")
+    print('it worked')
 mlflow.end_run()
