@@ -24,7 +24,7 @@ Presidential job approval data is retreived from UC Santa Barbara[^4].
 
 This work was heavily influenced by a letter[^1] published in the American Political Science Review in 2019 and, in the future, I hope to expand my work to include the indicators and methods outlined by Drs. Dino P. Christensen and Douglas L. Kriner.
 
-Any success implementing an mlflow server on PostGRESQL on Google Cloud Platform is a result of the outstanding work [provided here by DLabs](https://github.com/dlabsai/mlflow-for-gcp).
+Any success implementing an mlflow server on PostGRESQL on Google Cloud Platform is a result of the outstanding work [provided here by DLabs](https://github.com/dlabsai/mlflow-for-gcp). It is a little out of date, but links to a fairly current git repo with clear instructions. Connecting to the PostGRES instance is much easier [this way](https://stackoverflow.com/questions/72411618/mlflow-and-postgres-getting-bad-request-error/72657672#comment140028532_72657672) using psycopg2 than using the pg8000 unix sock method.
 
 ## References
 
