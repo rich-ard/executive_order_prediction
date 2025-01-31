@@ -27,7 +27,7 @@ def load_env_values() -> None:
     os.environ["MLFLOW_TRACKING_PASSWORD"] = config["mlflow"]["MLFLOW_TRACKING_PASSWORD"]
     os.environ["MLFLOW_TRACKING_URI"] = config["mlflow"]["MLFLOW_TRACKING_URI"]
 
-mlflow.set_experiment('SARIMAX_TUNING')
+# mlflow.set_experiment('SARIMAX_TUNING')
 
 client = bigquery.Client()
 
@@ -167,7 +167,8 @@ job.result()
 # write experiment results to mlflow
 
 model_name = f"SARIMAX_run_at{datetime.now()}"
-with mlflow.start_run(run_name="Sarimax") as run:
+with mlflow.start_run(run_name="Sarimax",
+                      experiment_id=3) as run:
     mlflow.statsmodels.log_model(results,model_name,registered_model_name=model_name)
     mlflow.log_params({"order":final_sarimax_model_params['pdq'],"seasonal_order":final_sarimax_model_params['seasonal_pdq']})
     mlflow.log_figure(fig1, 'forecasting_results.png')
